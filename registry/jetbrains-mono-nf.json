@@ -2,8 +2,8 @@
   "name": "jetbrains-mono-nf",
   "repo": "ryanoasis/nerd-fonts",
   "desc": "JetBrains Mono Nerd Font",
-  "install_to": "$HOME/.local/share/fonts",
+  "install_to": "$AI_HOME/fonts",
   "url": "https://github.com/{repo}/releases/download/{tag}/JetBrainsMono.zip",
   "format": "zip",
-  "post_install": "fc-cache -fv $HOME/.local/share/fonts >/dev/null 2>&1"
+  "post_install": "fc-cache -fv $AI_HOME/fonts >/dev/null 2>&1"
 }

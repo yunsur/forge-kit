@@ -38,6 +38,10 @@ if [ -d "$PYENV_ROOT/bin" ]; then
     unset _pyenv_version
 fi
 
+# ── nvm ──────────────────────────────────────────────────
+export NVM_DIR="$RUNTIMES/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 # ── Go ───────────────────────────────────────────────────
 if command -v go &>/dev/null; then
     export GOPATH="$AI_HOME/cache/go"

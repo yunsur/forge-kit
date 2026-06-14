@@ -1,0 +1,10 @@
+{
+  "name": "nvm",
+  "repo": "nvm-sh/nvm",
+  "desc": "Node Version Manager",
+  "tag_strip": "v",
+  "install_to": "$RUNTIMES_DIR/nvm",
+  "url": "https://github.com/{repo}/archive/refs/tags/v{tag}.tar.gz",
+  "format": "tar.gz",
+  "strip": "strip1"
+}

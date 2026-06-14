@@ -582,7 +582,8 @@ _json_run_upgrade() {
     binaries=$(jq -r '.binaries // [] | .[]' "$manifest" 2>/dev/null | tr '\n' ' ')
 
     # 安装目录
-    local dest="${install_to:-$TOOLS_DIR/$name}"
+    local dest
+    [ -n "$install_to" ] && dest=$(eval echo "$install_to") || dest="$TOOLS_DIR/$name"
 
     _log "下载" "$name"
     local tmp="$TMP_DIR/$name"
@@ -630,7 +631,8 @@ _json_install_from() {
 
     # 声明式 install
     binaries=$(jq -r '.binaries // [] | .[]' "$manifest" 2>/dev/null | tr '\n' ' ')
-    local dest="${install_to:-$TOOLS_DIR/$name}"
+    local dest
+    [ -n "$install_to" ] && dest=$(eval echo "$install_to") || dest="$TOOLS_DIR/$name"
     mkdir -p "$dest"
     _extract "$file" "$dest" "$format" "$strip_mode" "$(echo "$binaries" | awk '{print $1}')"
 
