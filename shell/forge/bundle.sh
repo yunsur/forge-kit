@@ -100,7 +100,7 @@ _bundle_install() {
     # 并行安装
     echo -e "\n${B}安装中...${NC}\n"
 
-    mkdir -p "$AI_HOME/tools" "$AI_HOME/runtimes" "$AI_HOME/bin"
+    mkdir -p "$FORGE_HOME/tools" "$FORGE_HOME/runtimes" "$FORGE_HOME/bin"
 
     local inst_result
     inst_result=$(mktemp "${TMP_DIR}/.bundle_inst_XXXXXX")

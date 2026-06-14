@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────
 # AI 工作站环境
-# 用法: source $AI_HOME/env.sh
+# 用法: source $FORGE_HOME/env.sh
 # ─────────────────────────────────────────────────────────
 
-AI_HOME="${AI_HOME:-$HOME/forge}"
-RUNTIMES="$AI_HOME/runtimes"
+FORGE_HOME="${FORGE_HOME:-$HOME/forge}"
+RUNTIMES="$FORGE_HOME/runtimes"
 
 # 注意：env.sh 仅负责环境变量设置，不执行任何文件操作
 
@@ -44,14 +44,14 @@ export NVM_DIR="$RUNTIMES/nvm"
 
 # ── Go ───────────────────────────────────────────────────
 if command -v go &>/dev/null; then
-    export GOPATH="$AI_HOME/cache/go"
+    export GOPATH="$FORGE_HOME/cache/go"
     export GOPROXY="https://goproxy.cn,direct"
 fi
 
 # ── Rust ─────────────────────────────────────────────────
 if command -v cargo &>/dev/null; then
-    export CARGO_HOME="$AI_HOME/cache/cargo"
-    export RUSTUP_HOME="$AI_HOME/cache/rustup"
+    export CARGO_HOME="$FORGE_HOME/cache/cargo"
+    export RUSTUP_HOME="$FORGE_HOME/cache/rustup"
     export RUSTUP_DIST_SERVER="https://rsproxy.cn"
     export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
     export CARGO_REGISTRIES_CRATES_IO_PROTOCOL="sparse"
@@ -60,23 +60,23 @@ if command -v cargo &>/dev/null; then
 fi
 
 # ── 工具二进制 ────────────────────────────────────────────
-[ -d "$AI_HOME/bin" ] && PATH="$AI_HOME/bin:$PATH"
+[ -d "$FORGE_HOME/bin" ] && PATH="$FORGE_HOME/bin:$PATH"
 
 # ── 导出 ─────────────────────────────────────────────────
 export PATH
-export AI_HOME
-export TMPDIR="$AI_HOME/tmp"
+export FORGE_HOME
+export TMPDIR="$FORGE_HOME/tmp"
 export LD_LIBRARY_PATH
 
 # ── PyPI ─────────────────────────────────────────────────
-export PIP_CACHE_DIR="$AI_HOME/cache/pip"
-export UV_CACHE_DIR="$AI_HOME/cache/uv"
+export PIP_CACHE_DIR="$FORGE_HOME/cache/pip"
+export UV_CACHE_DIR="$FORGE_HOME/cache/uv"
 
 # ── Node.js ──────────────────────────────────────────────
-_node_bin="$AI_HOME/tools/node/bin"
+_node_bin="$FORGE_HOME/tools/node/bin"
 if [ -d "$_node_bin" ]; then
     PATH="$_node_bin:$PATH"
-    [ -d "$AI_HOME/tools/node/lib/node_modules" ] && export NODE_PATH="$AI_HOME/tools/node/lib/node_modules"
+    [ -d "$FORGE_HOME/tools/node/lib/node_modules" ] && export NODE_PATH="$FORGE_HOME/tools/node/lib/node_modules"
 fi
 unset _node_bin
 
@@ -110,7 +110,7 @@ if command -v starship &>/dev/null; then
 fi
 
 # ── 快速导航 ─────────────────────────────────────────────
-alias forge="cd \$AI_HOME"
+alias forge="cd \$FORGE_HOME"
 alias ..="cd .."
 alias ...="cd ../.."
 

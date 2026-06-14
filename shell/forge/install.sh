@@ -28,7 +28,7 @@ _install_tools() {
     local manifest_file="$_ROOT/download/download.manifest"
     local downloads="$_ROOT/download"
 
-    mkdir -p "$AI_HOME/tools" "$AI_HOME/runtimes" "$AI_HOME/bin"
+    mkdir -p "$FORGE_HOME/tools" "$FORGE_HOME/runtimes" "$FORGE_HOME/bin"
 
     # 从 download.manifest 解压
     if [ -f "$manifest_file" ]; then
@@ -124,7 +124,7 @@ cmd_install() {
             done
         done
 
-        mkdir -p "$AI_HOME/tools" "$AI_HOME/runtimes" "$AI_HOME/bin"
+        mkdir -p "$FORGE_HOME/tools" "$FORGE_HOME/runtimes" "$FORGE_HOME/bin"
 
         local n
         n=$(_parallel_count)

@@ -17,7 +17,7 @@ cmd_uninstall() {
         [ -d "$RUNTIMES_DIR/$tool" ] && rm -rf "$RUNTIMES_DIR/$tool" && echo -e "  删除: $RUNTIMES_DIR/$tool"
 
         # 清理 ai/bin/ 中的失效 symlink
-        find "$AI_HOME/bin" -type l ! -exec test -e {} \; -delete 2>/dev/null
+        find "$FORGE_HOME/bin" -type l ! -exec test -e {} \; -delete 2>/dev/null
 
         [ -f "$LOCK_FILE" ] && sed -i.bak "/^${tool}|/d" "$LOCK_FILE" && rm -f "$LOCK_FILE.bak"
 

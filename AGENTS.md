@@ -125,7 +125,7 @@ install_from() {
 - `github_latest "owner/repo"` — 从 GitHub API 获取最新 release tag
 - `fetch "名" "URL" "格式" "mode"` — 下载并解压到 `$TOOLS_DIR/名/`
 - `fetch_to "目标目录" "URL" "格式" "mode"` — 下载解压到指定目录
-- `link_binary "源路径"` — 创建 symlink 到 `$AI_HOME/bin/`
+- `link_binary "源路径"` — 创建 symlink 到 `$FORGE_HOME/bin/`
 - `_curl_opts` — 返回 curl 选项（自动处理代理和 GITHUB_TOKEN）
 
 ## Forge CLI 命令
@@ -182,7 +182,7 @@ echo 'source ~/forge/env.sh' >> ~/.zshrc
 |------|------|
 | `GITHUB_TOKEN` | GitHub API token（避免限速） |
 | `https_proxy` / `HTTPS_PROXY` | HTTPS 代理 |
-| `AI_HOME` | 工具安装根目录（默认 `$HOME/forge`） |
+| `FORGE_HOME` | 工具安装根目录（默认 `$HOME/forge`） |
 | `OS` / `ARCH` | 目标平台（默认 linux/amd64） |
 | `PIP_INDEX_URL` | PyPI 内网源 |
 | `NPM_CONFIG_REGISTRY` | npm 内网源 |

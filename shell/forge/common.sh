@@ -3,9 +3,9 @@
 # 公共函数库（被 manifest、forge 和 init.sh source）
 
 _ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-AI_HOME="${AI_HOME:-$HOME/forge}"
-TOOLS_DIR="$AI_HOME/tools"
-RUNTIMES_DIR="$AI_HOME/runtimes"
+FORGE_HOME="${FORGE_HOME:-$HOME/forge}"
+TOOLS_DIR="$FORGE_HOME/tools"
+RUNTIMES_DIR="$FORGE_HOME/runtimes"
 TMP_DIR="$_ROOT/download/.tmp"
 
 OS="${OS:-linux}"
@@ -142,8 +142,8 @@ _extract() {
 link_binary() {
     local src="$1" name="${2:-$(basename "$1")}"
     [ -f "$src" ] || return 0
-    mkdir -p "$AI_HOME/bin"
-    ln -sf "$src" "$AI_HOME/bin/$name"
+    mkdir -p "$FORGE_HOME/bin"
+    ln -sf "$src" "$FORGE_HOME/bin/$name"
 }
 
 # 更新脚本中的 VERSION 变量
@@ -714,7 +714,7 @@ _install_one_tool() {
     fi
 
     # 增量：目录存在且版本一致则跳过
-    if [ -d "$AI_HOME/tools/$tool" ] || [ -d "$AI_HOME/runtimes/$tool" ]; then
+    if [ -d "$FORGE_HOME/tools/$tool" ] || [ -d "$FORGE_HOME/runtimes/$tool" ]; then
         local latest_file=""
         for f in $files; do
             [ -f "$downloads/$f" ] && latest_file="$f"

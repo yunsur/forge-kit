@@ -18,7 +18,7 @@ _init_tools() {
     local manifest_file="$ROOT_DIR/download/download.manifest"
     local downloads="$ROOT_DIR/download"
 
-    mkdir -p "$AI_HOME/tools" "$AI_HOME/runtimes"
+    mkdir -p "$FORGE_HOME/tools" "$FORGE_HOME/runtimes"
 
     # 仅处理需要环境依赖的工具（python、speckit）
     local env_deps=(python speckit)
@@ -58,13 +58,13 @@ _init_tools() {
             # 对于 python，需要检查 pyenv 是否真正安装了该版本
             local skip_tool=0
             if [ "$tool" = "python" ]; then
-                local pyenv_bin="$AI_HOME/runtimes/pyenv/bin/pyenv"
+                local pyenv_bin="$FORGE_HOME/runtimes/pyenv/bin/pyenv"
                 local dl_ver
                 dl_ver=$(grep "^${tool}|" "$manifest_file" 2>/dev/null | tail -1 | cut -d'|' -f2)
                 if [ -x "$pyenv_bin" ] && "$pyenv_bin" versions --bare 2>/dev/null | grep -q "^${dl_ver}$"; then
                     skip_tool=1
                 fi
-            elif [ -d "$AI_HOME/tools/$tool" ] || [ -d "$AI_HOME/runtimes/$tool" ]; then
+            elif [ -d "$FORGE_HOME/tools/$tool" ] || [ -d "$FORGE_HOME/runtimes/$tool" ]; then
                 local latest_file=""
                 for f in $files; do
                     [ -f "$downloads/$f" ] && latest_file="$f"
@@ -134,10 +134,10 @@ _init_tools() {
 
 _init_dirs() {
     _log "init" "创建基础目录"
-    mkdir -p "$AI_HOME/bin" "$AI_HOME/tools" "$AI_HOME/runtimes" "$AI_HOME/tmp"
-    # env.sh 拷贝到 AI_HOME，使 ai/ 完全脱离 forge/
+    mkdir -p "$FORGE_HOME/bin" "$FORGE_HOME/tools" "$FORGE_HOME/runtimes" "$FORGE_HOME/tmp"
+    # env.sh 拷贝到 FORGE_HOME，使 ai/ 完全脱离 forge/
     if [ -f "$ROOT_DIR/shell/env.sh" ]; then
-        cp "$ROOT_DIR/shell/env.sh" "$AI_HOME/env.sh"
+        cp "$ROOT_DIR/shell/env.sh" "$FORGE_HOME/env.sh"
     fi
     ok "目录就绪"
 }
@@ -145,11 +145,11 @@ _init_dirs() {
 # ── bins ────────────────────────────────────────────────────
 
 _init_bins() {
-    mkdir -p "$AI_HOME/bin"
+    mkdir -p "$FORGE_HOME/bin"
 
     # 清理断裂的符号链接
     local cleaned=0
-    for link in "$AI_HOME/bin"/*; do
+    for link in "$FORGE_HOME/bin"/*; do
         [ -L "$link" ] || continue
         if [ ! -e "$link" ]; then
             rm -f "$link"
@@ -172,7 +172,7 @@ _init_bins() {
 
     local linked=0
 
-    for tool_dir in "$AI_HOME/tools"/*/; do
+    for tool_dir in "$FORGE_HOME/tools"/*/; do
         [ -d "$tool_dir" ] || continue
         local tool_name
         tool_name=$(basename "$tool_dir")
@@ -184,14 +184,14 @@ _init_bins() {
             local src="$tool_dir/$bin_rel"
             local bname
             bname=$(basename "$bin_rel")
-            if [ -f "$src" ] && [ ! -L "$AI_HOME/bin/$bname" ]; then
-                ln -sf "$src" "$AI_HOME/bin/$bname"
+            if [ -f "$src" ] && [ ! -L "$FORGE_HOME/bin/$bname" ]; then
+                ln -sf "$src" "$FORGE_HOME/bin/$bname"
                 ((linked++)) || true
             fi
         done
     done
 
-    for rt_dir in "$AI_HOME/runtimes"/*/; do
+    for rt_dir in "$FORGE_HOME/runtimes"/*/; do
         [ -d "$rt_dir" ] || continue
         local rt_name
         rt_name=$(basename "$rt_dir")
@@ -203,8 +203,8 @@ _init_bins() {
             local src="$rt_dir/$bin_rel"
             local bname
             bname=$(basename "$bin_rel")
-            if [ -f "$src" ] && [ ! -L "$AI_HOME/bin/$bname" ]; then
-                ln -sf "$src" "$AI_HOME/bin/$bname"
+            if [ -f "$src" ] && [ ! -L "$FORGE_HOME/bin/$bname" ]; then
+                ln -sf "$src" "$FORGE_HOME/bin/$bname"
                 ((linked++)) || true
             fi
         done
@@ -219,8 +219,8 @@ _init_bins() {
             [ -f "$f" ] || continue
             local bname
             bname=$(basename "$f")
-            if [ ! -L "$AI_HOME/bin/$bname" ]; then
-                ln -sf "$f" "$AI_HOME/bin/$bname"
+            if [ ! -L "$FORGE_HOME/bin/$bname" ]; then
+                ln -sf "$f" "$FORGE_HOME/bin/$bname"
                 ((custom++)) || true
             fi
         done
@@ -231,7 +231,7 @@ _init_bins() {
 # ── npm 全局包 ────────────────────────────────────────────
 
 _init_npm_packages() {
-    local npm_bin="$AI_HOME/tools/node/bin/npm"
+    local npm_bin="$FORGE_HOME/tools/node/bin/npm"
     if [ ! -f "$npm_bin" ]; then
         warn "node 未安装，跳过 npm 包安装"
         return 0
@@ -295,7 +295,7 @@ cmd_init() {
             echo -e "  ${D}环境依赖工具（python、speckit）+ npm 包已安装${NC}"
             echo ""
             echo -e "  持久化环境（添加到 shell 配置）:"
-            echo -e "  ${B}echo 'source ${AI_HOME}/env.sh' >> ~/.${BASH_VERSION:+bashrc}${ZSH_VERSION:+zshrc}${NC}"
+            echo -e "  ${B}echo 'source ${FORGE_HOME}/env.sh' >> ~/.${BASH_VERSION:+bashrc}${ZSH_VERSION:+zshrc}${NC}"
             echo ""
             echo -e "  或临时加载:  ${B}forge start${NC}"
             echo -e "  检查环境:    ${B}forge doctor${NC}"

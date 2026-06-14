@@ -6,9 +6,9 @@ cmd_doctor() {
     local ok=0 warn=0 fail=0
 
     # 加载 ai/bin 到 PATH
-    [ -d "$AI_HOME/bin" ] && PATH="$AI_HOME/bin:$PATH"
-    [ -d "$AI_HOME/runtimes/pyenv/bin" ] && PATH="$AI_HOME/runtimes/pyenv/bin:$PATH"
-    [ -d "$AI_HOME/cache/cargo/bin" ] && PATH="$AI_HOME/cache/cargo/bin:$PATH"
+    [ -d "$FORGE_HOME/bin" ] && PATH="$FORGE_HOME/bin:$PATH"
+    [ -d "$FORGE_HOME/runtimes/pyenv/bin" ] && PATH="$FORGE_HOME/runtimes/pyenv/bin:$PATH"
+    [ -d "$FORGE_HOME/cache/cargo/bin" ] && PATH="$FORGE_HOME/cache/cargo/bin:$PATH"
 
     # 1. 检查 ai/bin 中的工具
     echo -e "${B}[工具链]${NC}"
@@ -50,7 +50,7 @@ cmd_doctor() {
 
     # 3. 检查目录结构
     echo -e "\n${B}[目录]${NC}"
-    local dirs=("$AI_HOME/bin" "$AI_HOME/tools" "$AI_HOME/runtimes")
+    local dirs=("$FORGE_HOME/bin" "$FORGE_HOME/tools" "$FORGE_HOME/runtimes")
     for d in "${dirs[@]}"; do
         if [ -d "$d" ]; then
             local count
