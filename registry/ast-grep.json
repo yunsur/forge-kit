@@ -1,0 +1,10 @@
+{
+  "name": "ast-grep",
+  "repo": "ast-grep/ast-grep",
+  "desc": "AST search",
+  "arch": { "amd64": "x86_64" },
+  "url": "https://github.com/{repo}/releases/download/{tag}/app-{arch}-unknown-linux-gnu.zip",
+  "format": "zip",
+  "strip": "flat-binary",
+  "binaries": ["sg"]
+}

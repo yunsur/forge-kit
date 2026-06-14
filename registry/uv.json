@@ -1,0 +1,10 @@
+{
+  "name": "uv",
+  "repo": "astral-sh/uv",
+  "desc": "Python package manager",
+  "arch": { "amd64": "x86_64" },
+  "url": "https://github.com/{repo}/releases/download/{tag}/uv-{arch}-unknown-linux-musl.tar.gz",
+  "format": "tar.gz",
+  "strip": "strip1",
+  "binaries": ["uv", "uvx"]
+}

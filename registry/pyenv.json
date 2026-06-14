@@ -1,0 +1,11 @@
+{
+  "name": "pyenv",
+  "repo": "pyenv/pyenv",
+  "desc": "Python version manager",
+  "tag_strip": "v",
+  "install_to": "$RUNTIMES_DIR/pyenv",
+  "url": "https://github.com/{repo}/archive/refs/tags/v{tag}.tar.gz",
+  "format": "tar.gz",
+  "strip": "strip1",
+  "binaries": ["bin/pyenv"]
+}

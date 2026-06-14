@@ -1,0 +1,10 @@
+{
+  "name": "go",
+  "desc": "Go toolchain",
+  "version_cmd": "curl -fsSL 'https://go.dev/dl/?mode=json' 2>/dev/null | python3 -c \"import json,sys; print(json.load(sys.stdin)[0]['version'])\" 2>/dev/null | sed 's/^go//'",
+  "arch": { "aarch64": "arm64" },
+  "url": "https://go.dev/dl/go{tag}.linux-{arch}.tar.gz",
+  "format": "tar.gz",
+  "strip": "strip1",
+  "binaries": ["bin/go", "bin/gofmt"]
+}

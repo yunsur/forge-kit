@@ -1,0 +1,10 @@
+{
+  "name": "jq",
+  "repo": "jqlang/jq",
+  "desc": "JSON processor",
+  "tag_strip": "jq-",
+  "arch": { "amd64": "amd64", "aarch64": "arm64" },
+  "url": "https://github.com/{repo}/releases/download/jq-{tag}/jq-linux-{arch}",
+  "format": "binary",
+  "binaries": ["jq"]
+}

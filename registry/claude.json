@@ -1,0 +1,10 @@
+{
+  "name": "claude",
+  "desc": "Claude Code CLI",
+  "source": "custom",
+  "version_url": "https://downloads.claude.ai/claude-code-releases/latest",
+  "arch": { "amd64": "linux-x64", "aarch64": "linux-arm64" },
+  "url": "https://downloads.claude.ai/claude-code-releases/{tag}/{arch}/claude",
+  "format": "binary",
+  "binaries": ["claude"]
+}

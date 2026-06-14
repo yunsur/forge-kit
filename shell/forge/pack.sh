@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2155
 # 命令: pack
 
 cmd_pack() {
@@ -10,14 +11,6 @@ cmd_pack() {
     mkdir -p "$dest"
 
     case "$target" in
-        config)
-            # 仅打包配置（config + shell + forge 命令）
-            out="forge_config_$(date +%Y%m%d%H).tgz"
-            echo -e "${B}[打包配置]${NC} $out"
-            [ -d "$_ROOT/config" ] && cp -r "$_ROOT/config" "$dest/"
-            [ -d "$_ROOT/shell" ] && cp -r "$_ROOT/shell" "$dest/"
-            [ -f "$_ROOT/forge" ] && cp "$_ROOT/forge" "$dest/"
-            ;;
         full|*)
             # 全量打包（所有内容）
             echo -e "${B}[打包]${NC} $out"
@@ -26,7 +19,7 @@ cmd_pack() {
                 cp -r "$_ROOT/download" "$dest/"
             fi
             # 项目文件（shell/ 已包含 env.sh 和 forge 模块）
-            for d in config shell registry; do
+            for d in shell registry; do
                 [ -d "$_ROOT/$d" ] && cp -r "$_ROOT/$d" "$dest/"
             done
             [ -f "$_ROOT/forge" ] && cp "$_ROOT/forge" "$dest/"

@@ -1,0 +1,10 @@
+{
+  "name": "rg",
+  "repo": "BurntSushi/ripgrep",
+  "desc": "Fast search",
+  "arch": { "amd64": "x86_64" },
+  "url": "https://github.com/{repo}/releases/download/{tag}/ripgrep-{tag}-{arch}-unknown-linux-musl.tar.gz",
+  "format": "tar.gz",
+  "strip": "strip1",
+  "binaries": ["rg"]
+}

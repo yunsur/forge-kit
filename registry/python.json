@@ -1,0 +1,9 @@
+{
+  "name": "python",
+  "desc": "CPython",
+  "depends_on": ["pyenv"],
+  "hook": "python.sh",
+  "url": "https://www.python.org/ftp/python/{tag}/Python-{tag}.tar.xz",
+  "format": "tar.xz",
+  "strip": "strip1"
+}

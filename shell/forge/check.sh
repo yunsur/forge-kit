@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090
 # 命令: update / 默认（brew cu 风格）
 
 cmd_check() {
@@ -13,11 +14,19 @@ cmd_check() {
     # 缓存所有工具的最新版本
     local umf="$_ROOT/download/update.manifest"
     mkdir -p "$_ROOT/download"
-    > "$umf"
+    : > "$umf"
 
+    # 去重：跳过有 JSON 版本的 shell hook
+    local seen=""
     for manifest in "${REGISTRY[@]}"; do
         local name installed latest
-        name=$(meta_get "$manifest" "name")
+        name=$(_meta_get_name "$manifest")
+        [ -z "$name" ] && continue
+        case "|$seen|" in
+            *"|${name}|"*) continue ;;
+        esac
+        seen="${seen}|${name}"
+
         installed=$(get_installed "$name")
 
         latest=$(get_latest_version "$manifest")
@@ -65,10 +74,7 @@ do_upgrade_list() {
         IFS='|' read -r name installed latest manifest <<< "$entry"
         echo -e "${B}[升级]${NC} ${BOLD}${name}${NC}  ${installed} → ${G}${latest}${NC}"
 
-        if (
-            source "$manifest"
-            type upgrade &>/dev/null && upgrade
-        ); then
+        if run_upgrade "$manifest"; then
             set_installed "$name" "$latest"
             echo -e "  ${G}✓${NC} ${name} ${latest}"
             ((ok++)) || true

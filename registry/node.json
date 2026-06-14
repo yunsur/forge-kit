@@ -1,0 +1,10 @@
+{
+  "name": "node",
+  "desc": "Node.js",
+  "version_cmd": "curl -fsSL 'https://nodejs.org/dist/index.json' 2>/dev/null | python3 -c \"import json,sys; [print(d['version'].lstrip('v')) for d in json.load(sys.stdin) if d.get('lts') and d['lts'] is not False]\" 2>/dev/null | head -1",
+  "arch": { "amd64": "x64", "aarch64": "arm64" },
+  "url": "https://nodejs.org/dist/v{tag}/node-v{tag}-linux-{arch}.tar.gz",
+  "format": "tar.gz",
+  "strip": "strip1",
+  "binaries": ["bin/node", "bin/npm", "bin/npx"]
+}

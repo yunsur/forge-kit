@@ -1,0 +1,11 @@
+{
+  "name": "bat",
+  "repo": "sharkdp/bat",
+  "desc": "Syntax highlighting cat",
+  "tag_strip": "v",
+  "arch": { "amd64": "x86_64" },
+  "url": "https://github.com/{repo}/releases/download/v{tag}/bat-v{tag}-{arch}-unknown-linux-musl.tar.gz",
+  "format": "tar.gz",
+  "strip": "strip1",
+  "binaries": ["bat"]
+}

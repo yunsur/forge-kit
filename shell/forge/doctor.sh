@@ -50,39 +50,18 @@ cmd_doctor() {
 
     # 3. 检查目录结构
     echo -e "\n${B}[目录]${NC}"
-    local dirs=("$AI_HOME/bin" "$AI_HOME/tools" "$AI_HOME/runtimes" "$AI_HOME/mcp" "$AI_HOME/config" "$AI_HOME/skills")
+    local dirs=("$AI_HOME/bin" "$AI_HOME/tools" "$AI_HOME/runtimes")
     for d in "${dirs[@]}"; do
         if [ -d "$d" ]; then
             local count
-            count=$(ls -1 "$d" 2>/dev/null | wc -l | tr -d ' ')
-            printf "  ${G}✓${NC} %-30s (%s 项)\n" "${d#$HOME/}" "$count"
+            count=$(find "$d" -maxdepth 1 2>/dev/null | wc -l | tr -d ' ')
+            printf "  ${G}✓${NC} %-30s (%s 项)\n" "${d#"$HOME"/}" "$count"
             ((ok++)) || true
         else
-            printf "  ${Y}!${NC} %-30s 不存在\n" "${d#$HOME/}"
+            printf "  ${Y}!${NC} %-30s 不存在\n" "${d#"$HOME"/}"
             ((warn++)) || true
         fi
     done
-
-    # 4. 检查配置链接
-    echo -e "\n${B}[配置]${NC}"
-    if [ -L "$HOME/.claude/skills" ] || [ -d "$HOME/.claude/skills" ]; then
-        local scount
-        scount=$(ls -1 "$HOME/.claude/skills" 2>/dev/null | wc -l | tr -d ' ')
-        printf "  ${G}✓${NC} ~/.claude/skills/ (%s 个 skill)\n" "$scount"
-        ((ok++)) || true
-    else
-        printf "  ${R}✗${NC} ~/.claude/skills/ 未链接\n"
-        ((fail++)) || true
-    fi
-    if [ -f "$HOME/.claude/mcp.json" ]; then
-        local mcp_count
-        mcp_count=$(python3 -c "import json; print(len(json.load(open('$HOME/.claude/mcp.json')).get('mcpServers',{})))" 2>/dev/null || echo 0)
-        printf "  ${G}✓${NC} ~/.claude/mcp.json (%s 个 server)\n" "$mcp_count"
-        ((ok++)) || true
-    else
-        printf "  ${Y}!${NC} ~/.claude/mcp.json 不存在\n"
-        ((warn++)) || true
-    fi
 
     echo -e "\n${BOLD}结果:${NC} ${G}${ok} 通过${NC}  ${Y}${warn} 警告${NC}  ${R}${fail} 失败${NC}\n"
 }

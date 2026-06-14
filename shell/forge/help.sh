@@ -14,26 +14,18 @@ forge - AI 工具版本管理器
   forge update                             仅检查可用更新
   forge download [--force]                 只下载不解压（--force 强制重新下载）
   forge install [tool...]                  安装环境无关工具（解压+链接，无需运行时）
-  forge init                               初始化环境依赖工具+配置（pyenv-virtualenv、python、speckit）
+  forge start                              加载 AI 工作站环境（source ~/ai/env.sh）
+  forge init                               初始化环境依赖工具+链接+npm包
   forge init tools                         仅安装环境依赖工具
-  forge init config                        仅部署配置文件
-  forge init skills                        仅部署 Skills
-  forge init mcp                           仅合并 MCP 配置
   forge init bins                          仅链接二进制
-  forge npm <args>                         封装 npm（安装后自动链接全局二进制）
+  forge init npm                           仅安装 npm 全局包（config/npm-packages.txt）
   forge uninstall                          卸载指定工具
+  forge info <tool>                        显示工具详情
 
-  forge new <name>                         生成新工具的 manifest 模板
-  forge pack [config|full]                 打包用于迁移（config=仅配置，full=全量默认）
-  forge merge config <archive.tgz>         合并配置包到当前环境
-  forge push <user@host[:port]> [path]     打包并 scp 到远程（默认 /tmp）
-
-  forge skills install <owner/repo/skill>  下载 skill
-  forge skills list                        显示已安装 skills
-  forge skills remove <name>               删除 skill
-
-  forge mcp install                        安装 MCP server 包
-  forge mcp list                           显示 MCP server 配置
+  forge bundle install [Brewfile]          从清单批量安装
+  forge bundle dump                        导出已安装工具到 Brewfile
+  forge cleanup                            清理旧版本下载文件
+  forge pack                               打包用于迁移
 
   forge doctor                             环境检查
 

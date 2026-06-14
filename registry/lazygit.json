@@ -1,0 +1,11 @@
+{
+  "name": "lazygit",
+  "repo": "jesseduffield/lazygit",
+  "desc": "Git TUI",
+  "tag_strip": "v",
+  "arch": { "amd64": "x86_64", "aarch64": "arm64" },
+  "url": "https://github.com/{repo}/releases/download/v{tag}/lazygit_{tag}_Linux_{arch}.tar.gz",
+  "format": "tar.gz",
+  "strip": "flat-binary",
+  "binaries": ["lazygit"]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "fzf",
+  "repo": "junegunn/fzf",
+  "desc": "Fuzzy finder",
+  "tag_strip": "v",
+  "arch": { "aarch64": "arm64" },
+  "url": "https://github.com/{repo}/releases/download/v{tag}/fzf-{tag}-linux_{arch}.tar.gz",
+  "format": "tar.gz",
+  "strip": "flat",
+  "binaries": ["fzf"]
+}

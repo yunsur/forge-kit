@@ -1,0 +1,11 @@
+{
+  "name": "bun",
+  "repo": "oven-sh/bun",
+  "desc": "JavaScript runtime",
+  "tag_strip": "bun-v",
+  "arch": { "amd64": "x64", "aarch64": "aarch64" },
+  "url": "https://github.com/{repo}/releases/download/bun-v{tag}/bun-linux-{arch}.zip",
+  "format": "zip",
+  "strip": "flat-binary",
+  "binaries": ["bun"]
+}

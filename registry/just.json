@@ -1,0 +1,10 @@
+{
+  "name": "just",
+  "repo": "casey/just",
+  "desc": "Task runner",
+  "arch": { "amd64": "x86_64" },
+  "url": "https://github.com/{repo}/releases/download/{tag}/just-{tag}-{arch}-unknown-linux-musl.tar.gz",
+  "format": "tar.gz",
+  "strip": "flat-binary",
+  "binaries": ["just"]
+}

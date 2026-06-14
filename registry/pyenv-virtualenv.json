@@ -1,0 +1,11 @@
+{
+  "name": "pyenv-virtualenv",
+  "repo": "pyenv/pyenv-virtualenv",
+  "desc": "pyenv virtualenv plugin",
+  "depends_on": ["pyenv"],
+  "tag_strip": "v",
+  "install_to": "$RUNTIMES_DIR/pyenv/plugins/pyenv-virtualenv",
+  "url": "https://github.com/{repo}/archive/refs/tags/v{tag}.tar.gz",
+  "format": "tar.gz",
+  "strip": "strip1"
+}

@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090
 # ─────────────────────────────────────────────────────────
 # forge - AI 工具版本管理器
 #
 # 用法:
-#   forge                   检查并提示更新（类似 brew cu）
-#   forge -a                检查并更新全部（类似 brew cu -a）
-#   forge download            只下载不解压
-#   forge install           安装环境无关工具（解压+git clone+字体+链接）
-#   forge init              初始化环境依赖工具+配置
-#   forge init tools|config|skills|mcp|bins  单步初始化
+#   forge                   检查并提示更新
+#   forge -a                检查并更新全部
+#   forge download          只下载不解压
+#   forge install           安装环境无关工具
+#   forge start             加载环境（install 后、init 前）
+#   forge init              初始化环境依赖工具+链接+npm包
+#   forge init tools|bins|npm  单步初始化
 #   forge list              显示所有工具状态
-#   forge pack [config|full] 打包用于迁移（config=仅配置，full=全量默认）
-#   forge push <target>     打包并 scp 到远程服务器
-#   forge npm <args>        封装 npm（安装后自动链接全局二进制）
+#   forge start             加载 AI 工作站环境
+#   forge pack              打包用于迁移
 #   forge update            仅检查可用更新
 # ─────────────────────────────────────────────────────────
 set -euo pipefail
@@ -32,16 +33,14 @@ case "${1:-}" in
     download)       shift; cmd_download "$@" ;;
     install)        shift; cmd_install "$@" ;;
     init)           shift; cmd_init "$@" ;;
-    uninstall|rm)   shift; cmd_uninstall "$@" ;;
-    list|ls)        cmd_list ;;
+    uninstall)      shift; cmd_uninstall "$@" ;;
+    list)           cmd_list ;;
     update)         cmd_check "false" ;;
-    new)            shift; cmd_new "$@" ;;
     pack)           shift; cmd_pack "$@" ;;
-    merge)          shift; cmd_merge "$@" ;;
-    push)           shift; cmd_push "$@" ;;
-    npm)            shift; cmd_npm "$@" ;;
-    skills)         shift; cmd_skills "$@" ;;
-    mcp)            shift; cmd_mcp "$@" ;;
+    bundle)         shift; cmd_bundle "$@" ;;
+    cleanup)        cmd_cleanup ;;
+    info)           shift; cmd_info "$@" ;;
+    start)          cmd_start ;;
     doctor)         cmd_doctor ;;
     help|--help|-h) show_help ;;
     "")             cmd_check "false" ;;

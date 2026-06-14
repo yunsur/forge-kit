@@ -1,0 +1,10 @@
+{
+  "name": "cc-switch-cli",
+  "repo": "saladday/cc-switch-cli",
+  "desc": "Claude Code config switch",
+  "arch": { "amd64": "x64", "aarch64": "aarch64" },
+  "url": "https://github.com/{repo}/releases/download/{tag}/cc-switch-cli-linux-{arch}-musl.tar.gz",
+  "format": "tar.gz",
+  "strip": "flat-binary",
+  "binaries": ["cc-switch"]
+}

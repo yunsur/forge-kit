@@ -1,172 +1,86 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090,SC2329
 # 命令: download
-
-# download 专用：覆盖 fetch/fetch_to/link_binary，只下载不安装
-_fetch_for_download() {
-    local name="$1" url="$2" format="$3" mode="${4:-}" binary_name="${5:-}"
-    local filename="${_DOWNLOAD_FILENAME:-}"
-    [ -z "$filename" ] && filename=$(basename "$url" | sed 's/?.*//')
-    local dest="$_ROOT/download"
-    mkdir -p "$dest"
-    # 文件名去重
-    if [ -f "$dest/$filename" ]; then
-        local i=1 base="$filename"
-        while [ -f "$dest/${base}.${i}" ]; do ((i++)); done
-        filename="${base}.${i}"
-    fi
-    _log "下载" "$name → $filename"
-    _curl_download_opts; curl "${_CURL_OPTS[@]}" -o "$dest/$filename" "$url"
-    # 更新 install manifest（name|version|filename，去除旧条目）
-    local mf="$_ROOT/download/download.manifest"
-    [ -f "$mf" ] && sed -i.bak "/^${name}|/d" "$mf" && rm -f "$mf.bak"
-    echo "${name}|${_DOWNLOAD_VERSION:-?}|${filename}" >> "$mf"
-    ok "$name"
-}
-
-_fetch_to_for_download() {
-    local dest="$1" url="$2" format="$3" mode="${4:-}" binary_name="${5:-}"
-    local filename
-    filename=$(basename "$url" | sed 's/?.*//')
-    local dl_dest="$_ROOT/download"
-    mkdir -p "$dl_dest"
-    if [ -f "$dl_dest/$filename" ]; then
-        local i=1 base="$filename"
-        while [ -f "$dl_dest/${base}.${i}" ]; do ((i++)); done
-        filename="${base}.${i}"
-    fi
-    _curl_download_opts; curl "${_CURL_OPTS[@]}" -o "$dl_dest/$filename" "$url"
-    local ver="${filename%.tar.gz}"; ver="${ver%.tgz}"; ver="${ver%.tar.xz}"; ver="${ver%.zip}"
-    echo "$(basename "$dest")|${ver}|${filename}" >> "$_ROOT/download/download.manifest"
-}
-
-_git_repo_for() {
-    case "$1" in
-        superpowers) echo "obra/superpowers" ;;
-    esac
-}
-
-_git_clone_for_download() {
-    local name="$1" repo="$2"
-    local dest="$_ROOT/download/$name"
-    if [ -d "$dest/.git" ]; then
-        _log "更新" "$name (git pull)"
-        git -C "$dest" pull --ff-only 2>/dev/null || true
-    else
-        _log "克隆" "$name → download/$name"
-        rm -rf "$dest"
-        git clone --depth 1 --single-branch "https://github.com/${repo}.git" "$dest" 2>/dev/null
-    fi
-}
-
-_version_eq() {
-    local a="${1#v}" b="${2#v}"
-    [ "$a" = "$b" ]
-}
 
 cmd_download() {
     load_registry
-    local force=0
+    local force=0 nodeps=0
     local targets=()
     for arg in "$@"; do
         case "$arg" in
             --force|-f) force=1 ;;
+            --no-deps) nodeps=1 ;;
             *) targets+=("$arg") ;;
         esac
     done
 
     if [ ${#targets[@]} -eq 0 ]; then
         targets=()
+        local seen=""
         for manifest in "${REGISTRY[@]}"; do
             local name
-            name=$(meta_get "$manifest" "name")
+            name=$(_meta_get_name "$manifest")
+            [ -z "$name" ] && continue
+            case "|$seen|" in
+                *"|${name}|"*) continue ;;
+            esac
+            seen="${seen}|${name}"
             targets+=("$name")
         done
     fi
 
     [ ${#targets[@]} -eq 0 ] && { echo "没有可下载的工具。"; return; }
 
+    # 解析依赖顺序
+    local resolved=()
+    for tool in "${targets[@]}"; do
+        if [ "$nodeps" -eq 1 ]; then
+            resolved+=("$tool")
+        else
+            local deps
+            deps=$(_resolve_deps "$tool")
+            for dep in $deps; do
+                local found=0
+                for r in "${resolved[@]+"${resolved[@]}"}"; do
+                    [ "$r" = "$dep" ] && found=1 && break
+                done
+                [ "$found" -eq 0 ] && resolved+=("$dep")
+            done
+        fi
+    done
+
     # 准备下载目录和 manifest
     mkdir -p "$_ROOT/download"
 
     echo ""
-    local ok=0 fail=0 skip=0
+    local resolved_count=${#resolved[*]}
+    _log "download" "下载 ${resolved_count} 个工具"
 
-    # git 工具单独处理（克隆到 download/）
-    local -a archive_targets=()
-    for tool in "${targets[@]}"; do
-        local repo
-        repo=$(_git_repo_for "$tool")
-        if [ -n "$repo" ]; then
-            if _git_clone_for_download "$tool" "$repo"; then
-                local git_ver
-                git_ver=$(git ls-remote --tags --sort=-v:refname "https://github.com/${repo}.git" 2>/dev/null \
-                    | head -1 | sed 's|.*refs/tags/||;s/\^{}//')
-                [ -z "$git_ver" ] && git_ver=$(git -C "$_ROOT/download/$tool" rev-parse --short HEAD 2>/dev/null || echo '?')
-                set_installed "$tool" "$git_ver"
-                echo -e "  ${G}✓${NC} ${tool}"
-                ((ok++)) || true
-            else
-                echo -e "  ${R}✗${NC} ${tool} 克隆失败"
-                ((fail++)) || true
-            fi
-        else
-            archive_targets+=("$tool")
-        fi
-    done
+    # 并行下载
+    local n
+    n=$(_parallel_count)
+    # 下载限制并行数（避免 GitHub API 限流）
+    [ "$n" -gt 4 ] && n=4
 
-    # 增量：先检查版本，只下载有变化的
-    local -a to_download=()
-    for tool in ${archive_targets[@]+"${archive_targets[@]}"}; do
-        local manifest
-        manifest=$(find_manifest "$tool")
-        if [ -z "$manifest" ]; then
-            echo -e "${R}[错误]${NC} 未知工具: $tool"
-            ((fail++)) || true
-            continue
-        fi
+    local result_file
+    mkdir -p "$TMP_DIR"
+    result_file=$(mktemp "${TMP_DIR}/.download_result_XXXXXX")
 
-        local latest
-        latest=$(get_latest_version "$manifest")
-        [ -z "$latest" ] && latest="?"
+    printf '%s\n' "${resolved[@]+"${resolved[@]}"}" | \
+        xargs -P "$n" -I {} bash -c "
+            source '$ROOT_DIR/shell/forge/common.sh'
+            result=\$(_download_one_target '{}' '$force')
+            echo \"\$result\" >> '$result_file'
+        "
 
-        local installed
-        installed=$(get_installed "$tool")
-        if [ "$force" -ne 1 ] && [ -n "$installed" ] && _version_eq "$installed" "$latest"; then
-            echo -e "  ${D}—${NC} ${tool} ${latest} ${D}(已安装，跳过)${NC}"
-            ((skip++)) || true
-            continue
-        fi
-
-        echo -e "${B}[下载]${NC} ${BOLD}${tool}${NC}  ${G}${latest}${NC}"
-        to_download+=("$tool")
-    done
-
-    for tool in ${to_download[@]+"${to_download[@]}"}; do
-        local manifest
-        manifest=$(find_manifest "$tool")
-        local latest
-        latest=$(get_latest_version "$manifest")
-        [ -z "$latest" ] && latest="?"
-
-        # 覆盖函数：只下载不安装
-        _DOWNLOAD_NAME="$tool"
-        _DOWNLOAD_VERSION="$latest"
-        if (
-            source "$manifest"
-            fetch() { _fetch_for_download "$@"; }
-            fetch_to() { _fetch_to_for_download "$@"; }
-            link_binary() { :; }
-            type upgrade &>/dev/null && upgrade
-        ); then
-            set_installed "$tool" "$latest"
-            echo -e "  ${G}✓${NC} ${tool} ${latest}"
-            ((ok++)) || true
-        else
-            echo -e "  ${R}✗${NC} ${tool} 失败"
-            ((fail++)) || true
-        fi
-    done
+    local ok=0 skip=0 fail=0
+    if [ -f "$result_file" ]; then
+        ok=$(grep -c "^ok$" "$result_file" 2>/dev/null || echo 0)
+        skip=$(grep -c "^skip$" "$result_file" 2>/dev/null || echo 0)
+        fail=$(grep -c "^fail$" "$result_file" 2>/dev/null || echo 0)
+        rm -f "$result_file"
+    fi
 
     echo -e "\n${BOLD}完成:${NC} ${G}${ok} 成功${NC}  ${D}${skip} 跳过${NC}  ${R}${fail} 失败${NC}"
-    echo -e "${D}文件保存在 download/，执行 forge init 完成安装${NC}\n"
+    echo -e "${D}文件保存在 download/，执行 forge install 完成安装${NC}\n"
 }

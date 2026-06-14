@@ -1,23 +1,6 @@
 #!/usr/bin/env bash
-_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$_SCRIPT_DIR/../shell/forge/common.sh"
-
 # @name: speckit
-# @repo: github/spec-kit
-
-get_latest() { github_latest "github/spec-kit"; }
-
-upgrade() {
-    local latest; latest=$(get_latest)
-    [ -z "$latest" ] && { err "无法获取最新版本"; exit 1; }
-    # GitHub tarball URL 需要指定文件名
-    export _DOWNLOAD_FILENAME="spec-kit-${latest}.tar.gz"
-    fetch "speckit" \
-        "https://api.github.com/repos/github/spec-kit/tarball/${latest}" \
-        "tar.gz" "strip1"
-    unset _DOWNLOAD_FILENAME
-    # 注意：install_from() 在 forge init 时调用，此处不安装
-}
+# shell hook: speckit (pip install)
 
 install_from() {
     local file="$1"
@@ -25,13 +8,8 @@ install_from() {
     mkdir -p "$dest"
     _tar_quiet tar -xzf "$file" -C "$dest" --strip-components=1 \
         || { err "speckit 解压失败"; return 1; }
-    _install_speckit "$dest"
-}
 
-_install_speckit() {
-    local dest="$1"
-
-    # 查找可用的 Python（优先 pyenv）
+    # 查找可用的 Python
     local python_cmd=""
     local pyenv_root="$RUNTIMES_DIR/pyenv"
     if [ -x "$pyenv_root/bin/pyenv" ]; then
@@ -50,18 +28,15 @@ _install_speckit() {
     export PIP_INDEX_URL="http://172.21.3.9:8081/repository/PyPI_group/simple"
     export PIP_TRUSTED_HOST="172.21.3.9"
 
-    # 使用 --target 安装到指定目录
     (cd "$dest" && $python_cmd -m pip install --target "$dest/lib" .) \
         || { err "speckit 安装失败"; return 1; }
 
-    # 创建 bin 目录并重写 specify 脚本
     mkdir -p "$dest/bin"
     local python_bin
     python_bin=$($python_cmd -c "import sys; print(sys.executable)")
     cat > "$dest/bin/specify" << EOF
 #!${python_bin}
 import sys, os
-# 解析 symlink，获取真实路径
 _script = os.path.abspath(__file__)
 if os.path.islink(_script):
     _script = os.path.realpath(_script)
@@ -71,6 +46,5 @@ if __name__ == '__main__':
     main()
 EOF
     chmod +x "$dest/bin/specify"
-
     link_binary "$dest/bin/specify" "specify"
 }

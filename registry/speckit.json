@@ -1,0 +1,11 @@
+{
+  "name": "speckit",
+  "repo": "github/spec-kit",
+  "desc": "Spec-driven development toolkit",
+  "depends_on": ["python"],
+  "tag_strip": "v",
+  "url": "https://github.com/{repo}/archive/refs/tags/v{tag}.tar.gz",
+  "format": "tar.gz",
+  "strip": "strip1",
+  "hook": "speckit.sh"
+}

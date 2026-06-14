@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2115
 # 命令: uninstall
 
 cmd_uninstall() {
