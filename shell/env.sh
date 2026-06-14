@@ -4,7 +4,7 @@
 # 用法: source $AI_HOME/env.sh
 # ─────────────────────────────────────────────────────────
 
-AI_HOME="${AI_HOME:-$HOME/ai}"
+AI_HOME="${AI_HOME:-$HOME/forge}"
 RUNTIMES="$AI_HOME/runtimes"
 
 # 注意：env.sh 仅负责环境变量设置，不执行任何文件操作
@@ -110,7 +110,7 @@ if command -v starship &>/dev/null; then
 fi
 
 # ── 快速导航 ─────────────────────────────────────────────
-alias ai="cd \$AI_HOME"
+alias forge="cd \$AI_HOME"
 alias ..="cd .."
 alias ...="cd ../.."
 

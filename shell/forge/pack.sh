@@ -4,7 +4,7 @@
 
 cmd_pack() {
     local target="${1:-full}"
-    local out="forge_$(date +%Y%m%d%H).tgz"
+    local out="forge-kit_$(date +%Y%m%d%H).tgz"
     local staging
     staging=$(mktemp -d)
     local dest="$staging/forge"
@@ -37,5 +37,5 @@ cmd_pack() {
     md5 -q "$out" > "${out}.md5"
     echo -e "${G}[完成]${NC} $out ($size)"
     echo -e "${D}校验: md5 -c $(basename "${out}.md5")${NC}"
-    echo -e "${D}目标机器: tar xzf $(basename "$out") && cd forge && ./forge init${NC}"
+    echo -e "${D}目标机器: tar xzf $(basename "$out") && cd forge-kit && ./forge init${NC}"
 }

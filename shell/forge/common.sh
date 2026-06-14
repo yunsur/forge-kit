@@ -3,7 +3,7 @@
 # 公共函数库（被 manifest、forge 和 init.sh source）
 
 _ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-AI_HOME="${AI_HOME:-$HOME/ai}"
+AI_HOME="${AI_HOME:-$HOME/forge}"
 TOOLS_DIR="$AI_HOME/tools"
 RUNTIMES_DIR="$AI_HOME/runtimes"
 TMP_DIR="$_ROOT/download/.tmp"

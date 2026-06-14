@@ -137,7 +137,7 @@ install_from() {
 | `forge update` | 仅检查可用更新（缓存到 update.manifest） |
 | `forge download` | 只下载不解压（保存到 download/） |
 | `forge install [tool...]` | 安装环境无关工具（解压+链接，无需运行时） |
-| `forge start` | 加载 AI 工作站环境（source ~/ai/env.sh） |
+| `forge start` | 加载工作站环境（source ~/forge/env.sh） |
 | `forge init [tools|bins|npm]` | 初始化环境依赖工具+链接+npm包 |
 | `forge uninstall <tool>` | 卸载指定工具 |
 | `forge list` | 显示所有注册工具状态（3 列对齐） |
@@ -156,7 +156,7 @@ forge init       # 初始化环境依赖工具+链接+npm包
 
 init 完成后持久化环境：
 ```bash
-echo 'source ~/ai/env.sh' >> ~/.zshrc
+echo 'source ~/forge/env.sh' >> ~/.zshrc
 ```
 
 ## list 命令显示
@@ -182,7 +182,7 @@ echo 'source ~/ai/env.sh' >> ~/.zshrc
 |------|------|
 | `GITHUB_TOKEN` | GitHub API token（避免限速） |
 | `https_proxy` / `HTTPS_PROXY` | HTTPS 代理 |
-| `AI_HOME` | 工具安装根目录（默认 `$HOME/ai`） |
+| `AI_HOME` | 工具安装根目录（默认 `$HOME/forge`） |
 | `OS` / `ARCH` | 目标平台（默认 linux/amd64） |
 | `PIP_INDEX_URL` | PyPI 内网源 |
 | `NPM_CONFIG_REGISTRY` | npm 内网源 |

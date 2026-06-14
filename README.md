@@ -18,7 +18,7 @@
 ./forge init
 
 # 5. 持久化环境（添加到 shell 配置）
-echo 'source ~/ai/env.sh' >> ~/.zshrc
+echo 'source ~/forge/env.sh' >> ~/.zshrc
 
 # 6. 检查环境
 forge doctor
@@ -37,7 +37,7 @@ forge/
 │   └── npm-packages.txt # npm 全局包列表
 ├── download/            # 下载缓存与 manifest
 │   └── versions.lock    # 已安装版本记录
-└── ai/                  # 运行时（gitignore）
+└── forge/               # 运行时（gitignore）
     ├── bin/             # 工具符号链接
     ├── tools/           # 工具安装目录
     ├── runtimes/        # 运行时（pyenv, python）
@@ -54,7 +54,7 @@ forge/
 | `forge update` | 仅检查可用更新 |
 | `forge download [tool...]` | 下载工具到 `download/`（不解压） |
 | `forge install [tool...]` | 安装环境无关工具（解压+链接） |
-| `forge start` | 加载环境（source ~/ai/env.sh） |
+| `forge start` | 加载环境（source ~/forge/env.sh） |
 | `forge init [tools\|bins\|npm]` | 初始化环境依赖工具+链接+npm包 |
 | `forge uninstall <tool>` | 卸载工具 |
 | `forge doctor` | 环境检查 |

@@ -3,7 +3,7 @@
 # 命令: start — 加载 AI 工作站环境
 
 cmd_start() {
-    local env_file="$HOME/ai/env.sh"
+    local env_file="$HOME/forge/env.sh"
     if [ -f "$env_file" ]; then
         source "$env_file"
         echo -e "${G}环境已加载${NC}  source $env_file"

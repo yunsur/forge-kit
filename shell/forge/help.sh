@@ -14,7 +14,7 @@ forge - AI 工具版本管理器
   forge update                             仅检查可用更新
   forge download [--force]                 只下载不解压（--force 强制重新下载）
   forge install [tool...]                  安装环境无关工具（解压+链接，无需运行时）
-  forge start                              加载 AI 工作站环境（source ~/ai/env.sh）
+  forge start                              加载工作站环境（source ~/forge/env.sh）
   forge init                               初始化环境依赖工具+链接+npm包
   forge init tools                         仅安装环境依赖工具
   forge init bins                          仅链接二进制
