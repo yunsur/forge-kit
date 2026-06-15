@@ -7,7 +7,7 @@ cmd_pack() {
     local out="forge-kit_$(date +%Y%m%d%H).tgz"
     local staging
     staging=$(mktemp -d)
-    local dest="$staging/forge"
+    local dest="$staging/forge-kit"
     mkdir -p "$dest"
 
     case "$target" in
@@ -19,7 +19,7 @@ cmd_pack() {
                 cp -r "$_ROOT/download" "$dest/"
             fi
             # 项目文件（shell/ 已包含 env.sh 和 forge 模块）
-            for d in shell registry; do
+            for d in shell registry config; do
                 [ -d "$_ROOT/$d" ] && cp -r "$_ROOT/$d" "$dest/"
             done
             [ -f "$_ROOT/forge" ] && cp "$_ROOT/forge" "$dest/"
@@ -30,11 +30,15 @@ cmd_pack() {
     find "$staging" -name '._*' -delete 2>/dev/null
     find "$staging" -name '__MACOSX' -type d -exec rm -rf {} + 2>/dev/null
     # 打包（只含 forge/ 目录，COPYFILE_DISABLE 阻止 macOS xattr 写入）
-    COPYFILE_DISABLE=1 tar -czf "$out" -C "$staging" forge/
+    COPYFILE_DISABLE=1 tar -czf "$out" -C "$staging" forge-kit/
     rm -rf "$staging"
     local size
     size=$(du -h "$out" | cut -f1)
-    md5 -q "$out" > "${out}.md5"
+    if command -v md5 &>/dev/null; then
+        md5 -q "$out" > "${out}.md5"
+    else
+        md5sum "$out" | awk '{print $1}' > "${out}.md5"
+    fi
     echo -e "${G}[完成]${NC} $out ($size)"
     echo -e "${D}校验: md5 -c $(basename "${out}.md5")${NC}"
     echo -e "${D}目标机器: tar xzf $(basename "$out") && cd forge-kit && ./forge init${NC}"

@@ -595,7 +595,7 @@ _json_run_upgrade() {
     # 链接二进制
     for bin in $binaries; do
         local src="$dest/$bin"
-        [ -f "$src" ] && link_binary "$src" "$bin"
+        [ -f "$src" ] && link_binary "$src" "$(basename "$bin")"
     done
 
     # 后置命令
@@ -639,7 +639,7 @@ _json_install_from() {
     # 链接二进制
     for bin in $binaries; do
         local src="$dest/$bin"
-        [ -f "$src" ] && link_binary "$src" "$bin"
+        [ -f "$src" ] && link_binary "$src" "$(basename "$bin")"
     done
 
     # 后置命令

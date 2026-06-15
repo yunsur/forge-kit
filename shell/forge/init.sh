@@ -210,7 +210,7 @@ _init_bins() {
         done
     done
 
-    ok "新链接: ${linked} 个二进制 → ai/bin/"
+    ok "新链接: ${linked} 个二进制 → ${FORGE_HOME}/bin/"
 
     # 自定义脚本
     if [ -d "$ROOT_DIR/bin" ]; then

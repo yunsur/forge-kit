@@ -35,10 +35,23 @@ cmd_doctor() {
         fi
     done
 
-    # 2. 检查代理连通性
+    # 2. 检查网络源连通性（从环境变量读取）
     echo -e "\n${B}[网络]${NC}"
-    local targets=("https://github.com" "https://registry.npmmirror.com" "https://mirrors.aliyun.com" "https://goproxy.cn" "https://rsproxy.cn")
+    local targets=()
+    [ -n "${NPM_CONFIG_REGISTRY:-}" ] && targets+=("$NPM_CONFIG_REGISTRY")
+    [ -n "${GOPROXY:-}" ] && targets+=("${GOPROXY%%,*}")
+    [ -n "${PIP_INDEX_URL:-}" ] && targets+=("$PIP_INDEX_URL")
+    [ -n "${RUSTUP_DIST_SERVER:-}" ] && targets+=("$RUSTUP_DIST_SERVER")
+    # 去重
+    local unique=()
     for url in "${targets[@]}"; do
+        local found=0
+        for u in "${unique[@]}"; do
+            [ "$u" = "$url" ] && found=1 && break
+        done
+        [ "$found" -eq 0 ] && unique+=("$url")
+    done
+    for url in "${unique[@]}"; do
         if curl -sI --connect-timeout 5 "$url" &>/dev/null; then
             printf "  ${G}✓${NC} %s\n" "$url"
             ((ok++)) || true
