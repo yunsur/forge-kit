@@ -75,9 +75,9 @@ cmd_download() {
 
     local ok=0 skip=0 fail=0
     if [ -f "$result_file" ]; then
-        ok=$(grep -c "^ok$" "$result_file" 2>/dev/null || echo 0)
-        skip=$(grep -c "^skip$" "$result_file" 2>/dev/null || echo 0)
-        fail=$(grep -c "^fail$" "$result_file" 2>/dev/null || echo 0)
+        ok=$(grep -c "^ok$" "$result_file" 2>/dev/null || true);   ok=${ok:-0}
+        skip=$(grep -c "^skip$" "$result_file" 2>/dev/null || true); skip=${skip:-0}
+        fail=$(grep -c "^fail$" "$result_file" 2>/dev/null || true); fail=${fail:-0}
         rm -f "$result_file"
     fi
 

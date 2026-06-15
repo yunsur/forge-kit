@@ -64,9 +64,15 @@ _install_tools() {
 
             local installed=0 skipped=0 failed=0
             if [ -f "$result_file" ]; then
-                installed=$(grep -c "^ok$" "$result_file" 2>/dev/null || echo 0)
-                skipped=$(grep -c "^skip$" "$result_file" 2>/dev/null || echo 0)
-                failed=$(grep -c "^fail$" "$result_file" 2>/dev/null || echo 0)
+                installed=$(grep -c "^ok$" "$result_file" 2>/dev/null || true)
+                skipped=$(grep -c "^skip$" "$result_file" 2>/dev/null || true)
+                failed=$(grep -c "^fail" "$result_file" 2>/dev/null || true)
+                # 输出失败工具名
+                if [ "$failed" -gt 0 ]; then
+                    grep "^fail:" "$result_file" 2>/dev/null | while IFS= read -r line; do
+                        err "安装失败: ${line#fail:}"
+                    done
+                fi
                 rm -f "$result_file"
             fi
 
@@ -86,6 +92,21 @@ _install_tools() {
             [ -n "$mfile" ] && run_install_from "$mfile" "$font_file"
         fi
     fi
+}
+
+# ── config ──────────────────────────────────────────────────
+
+_install_configs() {
+    _log "config" "部署配置文件和源"
+    mkdir -p "$FORGE_HOME/config/pip" "$FORGE_HOME/config/go" "$FORGE_HOME/cache/cargo"
+
+    # env.sh 提前部署，确保 init 阶段 pip 等工具能找到内网源
+    [ -f "$ROOT_DIR/shell/env.sh" ]              && cp -f "$ROOT_DIR/shell/env.sh"              "$FORGE_HOME/env.sh"
+    [ -f "$ROOT_DIR/config/pip/pip.conf" ]       && cp -f "$ROOT_DIR/config/pip/pip.conf"       "$FORGE_HOME/config/pip/pip.conf"
+    [ -f "$ROOT_DIR/config/cargo/config.toml" ]  && cp -f "$ROOT_DIR/config/cargo/config.toml"  "$FORGE_HOME/cache/cargo/config.toml"
+    [ -f "$ROOT_DIR/config/go/env" ]             && cp -f "$ROOT_DIR/config/go/env"             "$FORGE_HOME/config/go/env"
+
+    ok "配置已部署"
 }
 
 # ── 主入口 ──────────────────────────────────────────────────
@@ -141,17 +162,25 @@ cmd_install() {
 
         local installed=0 skipped=0 failed=0
         if [ -f "$result_file" ]; then
-            installed=$(grep -c "^ok$" "$result_file" 2>/dev/null || echo 0)
-            skipped=$(grep -c "^skip$" "$result_file" 2>/dev/null || echo 0)
-            failed=$(grep -c "^fail$" "$result_file" 2>/dev/null || echo 0)
+            installed=$(grep -c "^ok$" "$result_file" 2>/dev/null || true); installed=${installed:-0}
+            skipped=$(grep -c "^skip$" "$result_file" 2>/dev/null || true);   skipped=${skipped:-0}
+            failed=$(grep -c "^fail" "$result_file" 2>/dev/null || true);     failed=${failed:-0}
+            # 输出失败工具名
+            if [ "$failed" -gt 0 ]; then
+                grep "^fail:" "$result_file" 2>/dev/null | while IFS= read -r line; do
+                    err "安装失败: ${line#fail:}"
+                done
+            fi
             rm -f "$result_file"
         fi
 
         ok "安装: ${installed} 成功  ${skipped} 跳过  ${failed} 失败"
+        _install_configs
         _init_bins
     else
         # 全量安装
         _install_tools
+        _install_configs
         _init_bins
     fi
 }

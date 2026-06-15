@@ -89,9 +89,9 @@ _bundle_install() {
 
     local dl_ok=0 dl_skip=0 dl_fail=0
     if [ -f "$dl_result" ]; then
-        dl_ok=$(grep -c "^ok$" "$dl_result" 2>/dev/null || echo 0)
-        dl_skip=$(grep -c "^skip$" "$dl_result" 2>/dev/null || echo 0)
-        dl_fail=$(grep -c "^fail$" "$dl_result" 2>/dev/null || echo 0)
+        dl_ok=$(grep -c "^ok$" "$dl_result" 2>/dev/null || true);     dl_ok=${dl_ok:-0}
+        dl_skip=$(grep -c "^skip$" "$dl_result" 2>/dev/null || true); dl_skip=${dl_skip:-0}
+        dl_fail=$(grep -c "^fail$" "$dl_result" 2>/dev/null || true); dl_fail=${dl_fail:-0}
         rm -f "$dl_result"
     fi
 
@@ -114,9 +114,9 @@ _bundle_install() {
 
     local inst_ok=0 inst_skip=0 inst_fail=0
     if [ -f "$inst_result" ]; then
-        inst_ok=$(grep -c "^ok$" "$inst_result" 2>/dev/null || echo 0)
-        inst_skip=$(grep -c "^skip$" "$inst_result" 2>/dev/null || echo 0)
-        inst_fail=$(grep -c "^fail$" "$inst_result" 2>/dev/null || echo 0)
+        inst_ok=$(grep -c "^ok$" "$inst_result" 2>/dev/null || true);     inst_ok=${inst_ok:-0}
+        inst_skip=$(grep -c "^skip$" "$inst_result" 2>/dev/null || true); inst_skip=${inst_skip:-0}
+        inst_fail=$(grep -c "^fail$" "$inst_result" 2>/dev/null || true); inst_fail=${inst_fail:-0}
         rm -f "$inst_result"
     fi
 

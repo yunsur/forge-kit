@@ -5,6 +5,11 @@ download/
 # macOS
 .DS_Store
 
+# 内网源配置（含内部地址，不提交）
+config/cargo/
+config/go/
+config/pip/
+
 # 编辑器
 .vscode/
 .idea/

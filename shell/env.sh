@@ -10,10 +10,9 @@ RUNTIMES="$FORGE_HOME/runtimes"
 # 注意：env.sh 仅负责环境变量设置，不执行任何文件操作
 
 # ── 内网源 ───────────────────────────────────────────────
-export PIP_INDEX_URL="http://172.21.3.9:8081/repository/PyPI_group/simple"
-export PIP_TRUSTED_HOST="172.21.3.9"
+# pip → $FORGE_HOME/config/pip/pip.conf；cargo → $CARGO_HOME/config.toml（自动发现）
+export PIP_CONFIG_FILE="$FORGE_HOME/config/pip/pip.conf"
 export NPM_CONFIG_REGISTRY="http://172.21.3.9:8081/repository/npm_group"
-export GOPROXY="http://172.21.3.9:8081/repository/golang_group,direct"
 
 # ── pyenv（最高优先级，确保 python/pip 使用 pyenv 版本）───
 export PYENV_ROOT="$RUNTIMES/pyenv"
@@ -45,8 +44,9 @@ export NVM_DIR="$RUNTIMES/nvm"
 # ── Go ───────────────────────────────────────────────────
 if command -v go &>/dev/null; then
     export GOPATH="$FORGE_HOME/cache/go"
-    export GOPROXY="https://goproxy.cn,direct"
 fi
+# 内网代理（由 forge install 部署）
+[ -f "$FORGE_HOME/config/go/env" ] && source "$FORGE_HOME/config/go/env"
 
 # ── Rust ─────────────────────────────────────────────────
 if command -v cargo &>/dev/null; then
@@ -54,8 +54,6 @@ if command -v cargo &>/dev/null; then
     export RUSTUP_HOME="$FORGE_HOME/cache/rustup"
     export RUSTUP_DIST_SERVER="https://rsproxy.cn"
     export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
-    export CARGO_REGISTRIES_CRATES_IO_PROTOCOL="sparse"
-    export CARGO_REGISTRIES_CRATES_IO_INDEX="sparse+http://172.21.3.13:8081/repository/cargo_group/"
     [ -d "$CARGO_HOME/bin" ] && PATH="$CARGO_HOME/bin:$PATH"
 fi
 

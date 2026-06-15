@@ -135,10 +135,7 @@ _init_tools() {
 _init_dirs() {
     _log "init" "创建基础目录"
     mkdir -p "$FORGE_HOME/bin" "$FORGE_HOME/tools" "$FORGE_HOME/runtimes" "$FORGE_HOME/tmp"
-    # env.sh 拷贝到 FORGE_HOME，使 ai/ 完全脱离 forge/
-    if [ -f "$ROOT_DIR/shell/env.sh" ]; then
-        cp "$ROOT_DIR/shell/env.sh" "$FORGE_HOME/env.sh"
-    fi
+    # env.sh 已在 forge install 阶段部署，此处仅确保目录存在
     ok "目录就绪"
 }
 
@@ -237,6 +234,10 @@ _init_npm_packages() {
         return 0
     fi
 
+    # 确保 npm 全局安装到 forge 目录下
+    export NPM_CONFIG_PREFIX="$FORGE_HOME/tools/node"
+    "$npm_bin" config set prefix "$FORGE_HOME/tools/node" 2>/dev/null || true
+
     local pkg_file="$ROOT_DIR/config/npm-packages.txt"
     if [ ! -f "$pkg_file" ]; then
         _log "init" "未发现 npm-packages.txt，跳过 npm 包安装"
@@ -278,6 +279,11 @@ cmd_init() {
         echo -e "  ${D}如需强制执行: FORGE_SKIP_DEV_CHECK=1 forge init${NC}"
         return 1
     fi
+
+    # 加载源配置（install 阶段已部署），确保 pip/npm 能找到内网源安装 speckit
+    export PIP_CONFIG_FILE="$FORGE_HOME/config/pip/pip.conf"
+    export NPM_CONFIG_REGISTRY="http://172.21.3.9:8081/repository/npm_group"
+    [ -f "$FORGE_HOME/config/go/env" ] && source "$FORGE_HOME/config/go/env"
 
     case "${1:-}" in
         tools)          _init_tools ;;
