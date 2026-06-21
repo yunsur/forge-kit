@@ -19,7 +19,7 @@ export PYENV_ROOT="$RUNTIMES/pyenv"
 if [ -d "$PYENV_ROOT/bin" ]; then
     export PATH="$PYENV_ROOT/bin:$PATH"
     eval "$(pyenv init -)"
-    pyenv commands -q virtualenv-init 2>/dev/null && eval "$(pyenv virtualenv-init -)"
+    pyenv commands virtualenv-init &>/dev/null && eval "$(pyenv virtualenv-init -)"
 
     # 激活已安装的 Python 版本（优先 global → local → 第一个已安装版本）
     _pyenv_version=""
